@@ -60,8 +60,20 @@ def cadastrar_tarefa(tarefas):
 def visualizar_tarefas(tarefas):
     """Mostra todas as tarefas cadastradas."""
     print("\n--- Tarefas cadastradas ---")
-    for tarefa in tarefas:
-        print(tarefa)
+    if not tarefas:
+        print("Nenhuma tarefa cadastrada no momento.")
+        return
+
+    for numero, tarefa in enumerate(tarefas, start=1):
+        print(f"\nTarefa #{numero}")
+        print(f"  Título.......: {tarefa['titulo']}")
+        print(f"  Descrição....: {tarefa['descricao'] or 'Sem descrição'}")
+        print(f"  Prioridade...: {tarefa['prioridade']}")
+        print(f"  Data limite..: {tarefa['data_limite'] or 'Sem data'}")
+        print(f"  Status.......: {tarefa['status']}")
+        print("-" * 40)
+
+    print(f"Total de tarefas cadastradas: {len(tarefas)}")
 
 
 def main():
@@ -84,4 +96,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        print("\n\nAplicação encerrada pelo usuário. Até logo!")
