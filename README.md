@@ -20,6 +20,9 @@ O planejamento lógico completo (Fase 1) está em [`docs/planejamento_logico.pdf
 tasktracker-projeto/
 ├── README.md                    # Documentação principal da aplicação e instruções de uso
 ├── .gitignore                   # Regras para ignorar arquivos temporários do Python e ambiente virtual
+├── .dockerignore                # Arquivos que não entram na imagem Docker
+├── Dockerfile                   # Receita da imagem Docker da aplicação (Fase 3)
+├── docker-compose.yml           # Orquestração da execução interativa no terminal (Fase 3)
 ├── docs/
 │   └── planejamento_logico.pdf  # Planejamento lógico e arquitetural entregue na Fase 1
 ├── src/
@@ -32,6 +35,7 @@ tasktracker-projeto/
 
 - Python 3
 - Git e GitHub
+- Docker e Docker Compose
 
 ## ✅ Regras de negócio
 
@@ -47,7 +51,59 @@ tasktracker-projeto/
 Se nenhuma tarefa foi cadastrada, a visualização informa que não existem registros.
 Opções de menu inválidas não encerram o programa: o sistema avisa e mostra o menu de novo.
 
-## ▶️ Instalação e execução
+## 🐳 Executando com Docker (recomendado)
+
+Pré-requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e aberto.
+Não é preciso instalar o Python: tudo roda dentro do container.
+
+```bash
+git clone https://github.com/jjoaquim0/TaskTracker---Bootcamp-2.git
+cd TaskTracker---Bootcamp-2
+```
+
+**1. Como construir a imagem:**
+
+```bash
+docker build -t tasktracker .
+```
+
+**2. Como rodar o container em modo isolado:**
+
+```bash
+docker run -it --rm tasktracker
+```
+
+**3. Como rodar via orquestração (recomendado):**
+
+```bash
+docker compose run --rm tasktracker
+```
+
+> O `docker compose run` constrói a imagem automaticamente na primeira vez.
+> Para forçar uma nova construção depois de alterar o código: `docker compose build`.
+
+### Por que `-it`, `stdin_open` e `tty`?
+
+O TaskTracker é uma aplicação de terminal que usa `input()` para ler as opções do menu.
+Por padrão, um container não recebe o que você digita. Por isso:
+
+| Configuração | Onde | Para que serve |
+|--------------|------|----------------|
+| `-i` / `stdin_open: true` | `docker run` / `docker-compose.yml` | Mantém aberta a entrada de dados (o teclado) |
+| `-t` / `tty: true` | `docker run` / `docker-compose.yml` | Aloca um terminal virtual, simulando o console |
+| `--rm` | `docker run` / `docker compose run` | Remove o container ao sair, sem deixar lixo |
+
+### O Dockerfile, linha a linha
+
+| Instrução | O que faz |
+|-----------|-----------|
+| `FROM python:3.11-slim` | Usa uma imagem base leve com Python 3.11 |
+| `WORKDIR /app` | Define a pasta de trabalho dentro do container |
+| `ENV PYTHONUNBUFFERED=1` | Mostra as mensagens no terminal imediatamente, sem buffer |
+| `COPY src/ /app/src/` | Copia o código da aplicação para dentro da imagem |
+| `CMD ["python", "src/main.py"]` | Comando que inicia o TaskTracker quando o container sobe |
+
+## ▶️ Execução sem Docker
 
 Pré-requisito: [Python 3](https://www.python.org/downloads/) instalado (não há dependências externas).
 
@@ -96,5 +152,5 @@ Tarefa cadastrada com sucesso!
 | Fase | Entrega | Status |
 |------|---------|--------|
 | 1 | Planejamento lógico (Google Docs + vídeo) | ✅ Concluída |
-| 2 | Repositório Git/GitHub + implementação em Python | 🚧 Atual |
-| 3 | Containerização com Docker, testes e deploy | ⏳ Futura |
+| 2 | Repositório Git/GitHub + implementação em Python | ✅ Concluída |
+| 3 | Containerização com Docker e Docker Compose | ✅ Concluída |
