@@ -1,0 +1,10 @@
+# Arquivos que não precisam ir para a imagem Docker
+.git
+.gitignore
+__pycache__/
+*.pyc
+.venv/
+venv/
+docs/
+tests/
+*.md
